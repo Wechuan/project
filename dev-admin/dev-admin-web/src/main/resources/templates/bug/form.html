@@ -1,0 +1,78 @@
+<link rel="stylesheet" href="/layui/lay/modules/ele-tree/eleTree.css" media="all">
+<div class="layui-content">
+    <div class="layui-row">
+        <div class="layui-card">
+            <div class="layui-card-header">BUG信息</div>
+            <form class="layui-form layui-card-body" action="" lay-filter="bug-form" >
+                <input type="hidden" id="layerIndex" value="-1">
+                <input type="hidden" name="id">
+
+
+                <div class="layui-form-item">
+                    <label class="layui-form-label">BUG标题</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="name" required lay-verify="required" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+
+                <div class="layui-form-item">
+                    <label class="layui-form-label">BUG描述</label>
+                    <div class="layui-input-block">
+                        <textarea id="demo" name="content" style="display: none;"></textarea>
+
+                    </div>
+                </div>
+
+                <div class="layui-form-item">
+                    <label class="layui-form-label">处理人</label>
+                    <div  class="layui-form layui-input-block" lay-filter="chapterRender">
+                        <select id="userDP" name="city"  name="dev_user_id">
+
+                                <option value="010">张三</option>
+                                <option value="021">李四</option>
+                                <option value="0571">王五</option>
+
+                        </select>
+                    </div>
+                </div>
+
+                <div class="layui-form-item" style="display: none;">
+                    <div class="layui-input-block">
+                        <button class="layui-btn layui-btn-blue"  lay-submit lay-filter="bug-form-submit">提交</button>
+                    </div>
+                </div>
+
+            </form>
+
+        </div>
+    </div>
+</div>
+<
+<script>
+
+
+       var resultData;
+        var htmls = '<option value="">请选择</option>'; //全局变量
+        $.ajax({
+            url: 'user/getUserList',
+            type: "post",
+            dataType : "json",
+            contentType : "application/json",
+            async: false,//这得注意是同步
+            success: function (result) {
+                resultData = result.list;
+                for(var x in resultData){
+                    htmls += '<option value = "' + resultData[x].id + '">' + resultData[x].name + '</option>'
+                }
+                $("#userDP").html(htmls);
+            }
+        });
+        var form = layui.form;
+        form.render('select','chapterRender');//需要渲染一下
+
+
+
+
+
+
+</script>

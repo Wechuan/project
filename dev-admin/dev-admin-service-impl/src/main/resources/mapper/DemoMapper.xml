@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dev.admin.mapper.DemoMapper">
+    <select id="getUserList" resultType="com.dev.admin.entity.User">
+        select * from user;
+    </select>
+
+    <insert id="SaveUser" useGeneratedKeys="true" keyProperty="id">
+        insert into user (`name`,login_name,password,phone,email,region,create_date)
+          values
+       (#{name},#{loginName},#{password},#{phone},#{email},#{region},#{createDate})
+    </insert>
+</mapper>

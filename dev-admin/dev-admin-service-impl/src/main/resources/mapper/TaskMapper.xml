@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dev.admin.mapper.TaskMapper">
+    <insert id="addTask" useGeneratedKeys="true" keyProperty="id">
+        insert into task(task_name,content,create_user_id,create_date,handler)
+        VALUES
+        (#{taskName},#{content},#{createUserId},#{createDate},#{handler})
+    </insert>
+
+    <select id="getTaskList" resultType="com.dev.admin.entity.Task">
+        select * from task
+    </select>
+
+    <update id="updateTask" useGeneratedKeys="true" keyProperty="id">
+        update task
+        set task_name = #{taskName},
+            content = #{content},
+            create_user_id = #{createUserId},
+            create_date = #{createDate},
+            handler = #{handler}
+        where id = #{id}
+    </update>
+
+    <delete id="deleteTask">
+        delete from task where id = #{id}
+    </delete>
+</mapper>

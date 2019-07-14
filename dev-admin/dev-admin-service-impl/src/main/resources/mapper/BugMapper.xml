@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dev.admin.mapper.BugMapper">
+    <insert id="addBug" useGeneratedKeys="true" keyProperty="id">
+        insert into bug(bug_name,content,create_user_id,create_date,handler)
+        VALUES
+        (#{bugName},#{content},#{createUserId},#{createDate},#{handler})
+    </insert>
+
+    <select id="getBugList" resultType="com.dev.admin.entity.Bug">
+        select * from bug
+    </select>
+
+    <update id="updateBug" useGeneratedKeys="true" keyProperty="id">
+        update bug
+        set bug_name = #{bugName},
+            content = #{content},
+            create_user_id = #{createUserId},
+            create_date = #{createDate},
+            handler = #{handler}
+        where id = #{id}
+    </update>
+
+    <delete id="deleteBug">
+        delete from bug where id = #{id}
+    </delete>
+</mapper>

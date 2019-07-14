@@ -1,0 +1,515 @@
+<div class="layui-content" id="project">
+
+    <button id="createProjectButton" class="layui-btn layui-btn-normal">创建项目</button>
+
+    <fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
+        <legend>我创建的</legend>
+    </fieldset>
+
+    <div style="padding: 20px; background-color: #F2F2F2;">
+        <div id="projectData" class="layui-row layui-col-space15">
+            <!--<div class="layui-col-md4" style="font-weight:bold;">-->
+            <!--<div class="layui-card" style="background: url('../image/bg-1.jpg');">-->
+            <!--<div class="layui-card" style="background: url('../image/bg-1.jpg');">-->
+            <!--<div class="layui-card-header">项目1</div>-->
+            <!--<div class="layui-card-body">-->
+            <!--卡片式面板面板通常用于非白色背景色的主体内<br>-->
+            <!--从而映衬出边框投影-->
+            <!--</div>-->
+            <!--</div>-->
+            <!--<button class="layui-btn layui-btn-primary layui-btn-xs">编辑</button>-->
+            <!--<button class="layui-btn layui-btn-danger layui-btn-xs">删除</button>-->
+            <!--<button class="layui-btn layui-btn-success layui-btn-xs">成员设置</button>-->
+            <!--</div>-->
+        </div>
+    </div>
+
+    <fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
+        <legend>我加入的</legend>
+    </fieldset>
+
+    <div style="padding: 20px; background-color: #F2F2F2;">
+        <div id="myJoinData" class="layui-row layui-col-space15">
+
+            <!--<div class="layui-col-md4">-->
+                <!--<div class="layui-card">-->
+                    <!--<div class="layui-card-header">项目2</div>-->
+                    <!--<div class="layui-card-body">-->
+                        <!--结合 layui 的栅格系统<br>-->
+                        <!--轻松实现响应式布局-->
+                    <!--</div>-->
+                <!--</div>-->
+            <!--</div>-->
+
+            <!--<div class="layui-col-md4">-->
+                <!--<div class="layui-card">-->
+                    <!--<div class="layui-card-header">项目3</div>-->
+                    <!--<div class="layui-card-body">-->
+                        <!--结合 layui 的栅格系统<br>-->
+                        <!--轻松实现响应式布局-->
+                    <!--</div>-->
+                <!--</div>-->
+            </div>
+
+        </div>
+    </div>
+
+<div class="layui-content" id="detail" hidden >
+    <button id="backProjectButton" class="layui-btn layui-btn-normal layui-btn-xs">返回</button>
+    <div id="detailBody">
+        <div class="layui-tab layui-tab-card" lay-filter="detail">
+            <ul class="layui-tab-title">
+                <li class="layui-this">任务管理</li>
+                <!--<li >BUG管理</li>-->
+            </ul>
+            <div cass="layui-tab-content" style="position: static;">
+                <div id="taskContent" class="layui-tab-item layui-show" >内容1
+                </div>
+                <div id="bugContent" class="layui-tab-item">内容2</div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script type="text/html" id="setProject">
+    <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="setProjectUser">设置成员</a>
+</script>
+
+<script type="text/html" id="regionTemplate">
+    {{#  if(d.region == 0){ }}
+    <span>北京</span>
+    {{#  } else if(d.region == 1) { }}
+    <span>上海</span>
+    {{#  } else if(d.region == 2) { }}
+    <span>广州</span>
+    {{#  } else if(d.region == 3) { }}
+    <span>深圳</span>
+    {{#  } else if(d.region == 4) { }}
+    <span>西安</span>
+    {{#  } else { }}
+    <span>未知</span>
+    {{#  } }}
+</script>
+
+
+<script>
+
+    $(function () {
+        var element = layui.element;
+        var table = layui.table;
+        var form = layui.form;
+
+        $.get('../task/tasks.html',function(data){
+            $("#taskContent").html(data);
+        });
+
+        function getMyJoin() {
+            var uid=$("#userId").val();
+
+            $.post('project/getMyJoinProjectList',{userId:uid},function (data) {
+                var html = "";
+                var list = data.list;
+                for (var i =0;i<list.length;i++){
+                    html +='<div class="layui-col-md4">'
+
+                        + '<div class="layui-card" data-key="clickDiv" style="background: url(\'../image/' + list[i].bgUrl + '\');">'
+                        +'<div class="layui-card-header">项目'+(i+1)+'</div>'
+                        +' <div class="layui-card-body">'
+                        + list[i].name
+                        +'</div>'
+                        +'</div>'
+                        +'</div>'
+                }
+                $('#myJoinData').html(html);
+            });
+        }
+
+        getMyJoin();
+        function getProjectList() {
+            $.post('project/getProjectList', {}, function (data) {
+                var html = "";
+                var list = data.list;
+                for (var i = 0; i < list.length; i++) {
+                    html += '<div class="layui-col-md4"  style="font-weight:bold;">'
+
+                        + '<div class="layui-card"  data-key="clickDiv" style="background: url(\'../image/' + list[i].bgUrl + '\');">'
+
+                        + '<div class="layui-card-header">项目' + (i + 1) + '</div>'
+                        + '<div class="layui-card-body">'
+                        + list[i].name
+                        + '</div>'
+                        + ' </div>'
+
+                        + '<button data-key="update" data-id="' + list[i].id + '" data-name="' + list[i].name + '" data-bgUrl="' + list[i].bgUrl + '" class="layui-btn layui-btn-primary layui-btn-xs">编辑</button>'
+                        + '<button data-key="delete" data-id="' + list[i].id + '" class="layui-btn layui-btn-danger layui-btn-xs">删除</button>'
+                        + '<button data-key="userSet" data-id="' + list[i].id + '"  class="layui-btn layui-btn-success layui-btn-xs">成员设置</button>'
+
+                        + '</div>'
+                }
+
+                $("#projectData").html(html);
+
+                //项目点击
+                $("[data-key='clickDiv']").click(function () {
+                    $("#detail").show();
+                    $(".layui-tab-content").show();
+                    $("#project").hide();
+                });
+                // 返回按钮
+                $("#backProjectButton").click(function(){
+                    $("#detail").hide();
+                    $("#project").show();
+                });
+
+
+                $("[data-key='delete']").click(function () {
+                    var id = $(this).data("id");
+                    layer.confirm('确认删除选择数据吗?', {icon: 0}, function (index) {
+                        $.post('project/deleteProject', {id: id}, function () {
+                            layer.msg("删除成功！");
+                            getProjectList();
+                        });
+                        layer.close(index);
+                    });
+                });
+
+                $("[data-key='userSet']").click(function () {
+                    var pId = $(this).data("id");
+
+
+                    var index = layer.open({
+                        type: 1
+                        , title: '用户列表'
+                        , area: ['700px', '600px']
+                        , shade: 0
+                        , maxmin: true
+                        , content: '<table id="usersTable" lay-filter="usersTable" lay-data="{id:\'idTest\'}"></table>'
+                        , btn: ['设置成员', '关闭']
+                        , yes: function () {
+                            //$(that).click();
+                            var checkStatus = table.checkStatus("idTest");
+                            var data = checkStatus.data;
+
+                            if (data.length == 0) {
+                                layer.alert("请至少选择一个用户", {
+                                    icon: 0
+                                });
+                                return;
+                            }
+                            var idArray = new Array();
+                            for (var i = 0; i < data.length; i++) {
+                                idArray.push(data[i].id);
+                            }
+
+                            //ajax 提交
+                            $.post('/project/addProjectUser', {userIds: JSON.stringify(idArray), projectId: pId})
+                            layer.closeAll();
+                        }
+                        , btn2: function () {
+                            layer.close();
+                        }
+                        , success: function () {
+                        }
+
+                    });
+                    table.render({
+                        id: 'idTest',
+                        elem: '#usersTable'
+                        , url: 'user/getUserList'
+                        , cols: [[
+                            {type: 'checkbox'},
+                            {field: 'id', title: 'id', width: 80, sort: true}
+                            , {field: 'loginName', title: '用户名', width: 150}
+                            , {field: 'name', title: '姓名', width: 150}
+                            , {field: 'email', title: '邮箱', width: 80}
+                            , {field: 'phone', title: '电话', width: 80}
+                            , {fixed: 'right', title: '操作', toolbar: '#setProject', width: 100}
+                        ]]
+                        , response: {
+                            //statusName: 'status' //规定数据状态的字段名称，默认：code
+                            //,statusCode: 200 //规定成功的状态码，默认：0
+                            countName: 'total' //规定数据总数的字段名称，默认：count
+                            , dataName: 'list' //规定数据列表的字段名称，默认：data
+                        }
+                        , page: true
+                        , skin: 'line' //表格风格
+                        , page: true //是否显示分页
+                        , limits: [10, 20, 50]
+                        , limit: 10 //每页默认显示的数量
+
+                    });
+                    //设置成员
+                    table.on('tool(usersTable)', function (obj) {
+                        var data = obj.data;
+                        var ida = new Array();
+                        ida.push(data.id)
+
+                        //console.log(obj)
+                        if (obj.event === 'setProjectUser') {
+
+                            layer.confirm('确认要设置成员吗?', {icon: 0}, function (index) {
+                                $.post('/project/addProjectUser', {userIds: JSON.stringify(ida), projectId: pId})
+                                layer.confirm('设置成功', {icon: 1});
+                                layer.close(index);
+                            });
+                        }
+                    });
+                });
+
+
+                $("[data-key='update']").click(function () {
+                    var id = $(this).data("id");
+                    var name = $(this).data("name");
+                    var bgUrl = $(this).data("bgurl")
+                    $.get('project/form.html', function (html) {
+                        var index = layer.open({
+                            type: 1
+                            , title: '项目信息'
+                            , area: ['700px', '530px']
+                            , shade: 0
+                            , maxmin: true
+                            , content: html
+                            , success: function () {
+                            }
+                        });
+
+                        onFormLoad();
+
+                        // 表单赋值
+                        var form = layui.form;
+                        form.val("project-form", {
+                            id: id,
+                            name: name,
+                            bgUrl: bgUrl
+                        });
+                        $('[tag="img"]').css("border", "none");
+                        $("[key='" + bgUrl + "']").css("border", "2px solid blue");
+
+                        $("#layerIndex").val(index);
+                    });
+                });
+
+
+            });
+        }
+
+        getProjectList();
+
+
+        function onFormLoad() {
+
+
+            $('[tag="img"]').click(function () {
+                $('[tag="img"]').css("border", "none");
+                $(this).css("border", "2px solid blue");
+
+                var bg = $(this).attr("key");
+                $("#bg_url").val(bg);
+            });
+
+            //监听提交
+            form.on('submit(project-form-submit)', function (data) {
+                $.post('project/addOrUpdateProject', data.field, function (data) {
+                    layer.msg('保存成功');
+                    var layerIndex = $("#layerIndex").val();
+                    if (layerIndex > 0) {
+                        layer.close(layerIndex);
+                    }
+                    getProjectList();
+                }, 'json');
+
+                return false; //阻止表单跳转。如果需要表单跳转，去掉这段即可。
+            });
+        }
+
+
+        $("#createProjectButton").click(function () {
+            $.get('project/form.html', function (html) {
+                var index = layer.open({
+                    type: 1
+                    , title: '项目信息'
+                    , area: ['700px', '530px']
+                    , shade: 0
+                    , maxmin: true
+                    , content: html
+                    , success: function () {
+                    }
+                });
+
+                onFormLoad();
+
+                $("#layerIndex").val(index);
+            });
+        });
+
+
+        $("#userDelete").click(function () {
+            var checkStatus = table.checkStatus('userTable'); //idTest 即为基础参数 id 对应的值
+            var data = checkStatus.data;
+            var len = data.length;
+            if (len == 0) {
+                return;
+            }
+
+            layer.confirm('确认删除选择数据吗?', {icon: 0}, function (index) {
+                var idArray = new Array();
+                for (var i = 0; i < data.length; i++) {
+                    idArray.push(data[i].id);
+                }
+
+                $.post('user/removeUsers', {ids: idArray}, function (data) {
+                    layer.msg('删除成功');
+                    table.reload('userTable', {
+                        page: 1
+                    });
+                })
+            });
+        });
+
+
+        $("#userSearch").click(function () {
+            var userName = $("#userName").val();
+            var userEmail = $("#userEmail").val();
+            table.reload('userTable', {
+                where: {
+                    name: userName,
+                    email: userEmail
+                },
+                page: 1
+            }); //表格重载
+        });
+
+        //展示已知数据
+        table.render({
+            elem: '#userTable'
+            , url: 'user/getUserList' //数据接口
+            , cols: [[ //标题栏
+                {type: 'checkbox'}
+                , {field: 'id', title: 'id', width: 80, sort: true}
+                , {field: 'loginName', title: '用户名', width: 150}
+                , {field: 'name', title: '姓名', width: 150}
+                , {field: 'email', title: '邮箱', minWidth: 80}
+                , {field: 'phone', title: '电话', minWidth: 80}
+                , {field: 'region', title: '地域', width: 100, templet: '#regionTemplate'}
+                , {field: 'regionText', title: '地域3', width: 100}
+                , {field: 'createDate', title: '创建时间', width: 150}
+                , {fixed: 'right', title: '操作', toolbar: '#userTableBar', width: 200}
+            ]]
+            , response: {
+                //statusName: 'status' //规定数据状态的字段名称，默认：code
+                //,statusCode: 200 //规定成功的状态码，默认：0
+                countName: 'total' //规定数据总数的字段名称，默认：count
+                , dataName: 'list' //规定数据列表的字段名称，默认：data
+            }
+            , skin: 'line' //表格风格
+            , page: true //是否显示分页
+            , limits: [10, 20, 50]
+            , limit: 10 //每页默认显示的数量
+        });
+
+
+        //监听行工具事件
+        table.on('tool(userTable)', function (obj) {
+            var data = obj.data;
+            //console.log(obj)
+            if (obj.event === 'del') {
+                layer.confirm('确认删除选择数据吗?', {icon: 0}, function (index) {
+                    $.post('user/removeUser', {id: data.id}, function (data) {
+                        layer.msg('删除成功');
+                        layer.close(index);
+                        table.reload('userTable', {
+                            page: 1
+                        });
+                    })
+                });
+
+
+            } else if (obj.event === 'edit') {
+                $.get('user/form.html', function (html) {
+                    var index = layer.open({
+                        type: 1
+                        , title: '用户添加'
+                        , area: ['700px', '530px']
+                        , shade: 0
+                        , maxmin: true
+                        , content: html
+                        //,btn: ['保存', '取消']
+                        , yes: function () {
+                            $(that).click();
+                        }
+                        , btn2: function () {
+                            layer.close(index);
+                        }
+                    });
+
+                    $("#layerIndex").val(index);
+                    // 表单赋值
+                    var form = layui.form;
+                    form.val("user-form", data);
+
+                });
+
+            } else if (obj.event === 'assignRole') {
+                var tree;
+                var index = layer.open({
+                    type: 1
+                    , title: '角色分配'
+                    , area: ['400px', '300px']
+                    , shade: 0
+                    , maxmin: true
+                    , content: '<ul id="roleTree"></ul>'
+                    , btn: ['保存', '取消']
+                    , yes: function () {
+                        var roles = tree.getChecked(false, true);
+                        var roleIdArray = new Array();
+                        for (var i = 0; i < roles.length; i++) {
+                            roleIdArray.push(roles[i].id);
+                        }
+                        $.post('user/addRole', {userId: data.id, roleIds: roleIdArray}, function () {
+                            layer.msg('设置成功');
+                            layer.close(index);
+                        });
+                    }
+                    , btn2: function () {
+                        layer.close(index);
+                    }
+                });
+
+                layui.extend({
+                    eleTree: 'ele-tree/eleTree'
+                }).use(['eleTree'], function () {
+                    tree = layui.eleTree.render({
+                        elem: '#roleTree',
+                        url: 'role/getRoleList',
+                        showCheckbox: true,
+                        request: {
+                            name: "name",
+                            key: "id",
+                            children: "children",
+                            checked: "checked",
+                            disabled: "disabled",
+                            isLeaf: "isLeaf"
+                        },
+                        response: {
+                            statusName: "code",
+                            statusCode: 0,
+                            dataName: "list"
+                        },
+                        done: function () {
+                            $.get('user/getRoleByUserId?userId=' + data.id, {}, function (data) {
+                                var idArray = new Array();
+                                for (var i = 0; i < data.length; i++) {
+                                    idArray.push(data[i].roleId);
+                                }
+                                tree.setChecked(idArray, true);
+                            }, 'json');
+
+                        }
+                    });
+                });
+            }
+        });
+
+    });
+</script>

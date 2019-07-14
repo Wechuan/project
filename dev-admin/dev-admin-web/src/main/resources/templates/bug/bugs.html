@@ -1,0 +1,211 @@
+<link rel="stylesheet" href="/layui/lay/modules/ele-tree/eleTree.css" media="all">
+<table class="layui-hide" id="bug" lay-filter="bug"></table>
+
+<script type="text/html" id="toolbarDemo">
+    <div class="layui-btn-container">
+        <button class="layui-btn layui-btn-warm layui-btn-sm" lay-event="createBug">添加BUG</button>
+        <button class="layui-btn layui-btn-sm" lay-event="getCheckData">获取选中行数据</button>
+        <button class="layui-btn layui-btn-sm" lay-event="getCheckLength">获取选中数目</button>
+        <button class="layui-btn layui-btn-sm" lay-event="isAll">验证是否全选</button>
+        <div class="layui-input-block" style="float: right;letter-spacing:5px;">
+            <input id="newPro" type="radio" name="sex" value="0" title="新建">
+            <div class="layui-unselect layui-form-radio">
+                <i class="layui-anim layui-icon"></i>
+                <div>男</div>
+            </div>
+            <input id="okPro"type="radio" name="sex" value="1" title="已完成" checked="">
+            <div class="layui-unselect layui-form-radio layui-form-radioed">
+                <i class="layui-anim layui-icon"></i>
+                <div>女</div>
+            </div>
+        </div>
+    </div>
+
+</script>
+
+<script type="text/html" id="barDemo">
+    <a class="layui-btn layui-btn-xs" lay-event="finish">完成</a>
+    <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
+    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+</script>
+
+
+<script type="text/html" id="bugTitleTpl">
+    <span class="layui-table-link" lay-event="showDetail">{{ d.username }}</span>
+</script>
+
+
+<script>
+    $(function(){
+        var table = layui.table;
+
+       // $("input[@type=radio][@checked]").val(); //得到单选框的 选中项的值(注意中间没有空格)
+        //$("input[@type=radio][@value=2]").attr("checked",'checked'); //设置单选框value=2的为选中状态.(注意中间没有空格)
+
+        table.render({
+            elem: '#bug'
+            ,url:'bug/getBugList'
+            ,toolbar: '#toolbarDemo'
+            ,title: '任务数据表'
+            ,cols: [[
+                 {field:'bugName', title:'Bug名称', width:150}
+                ,{field:'content', title:'具体内容'}
+                ,{field:'createUserId', title:'创建用户ID', width:180, sort: true}
+                ,{field:'createDate', title:'创建时间', width:180}
+                ,{field:'handler', title:'处理人', width:150}
+                ,{fixed: 'right', title:'操作', toolbar: '#barDemo', width:150}
+            ]]
+            ,page: true
+        });
+
+        //头工具栏事件
+        table.on('toolbar(bug)', function(obj){
+            var checkStatus = table.checkStatus(obj.config.id);
+            switch(obj.event){
+                case 'createBug':
+                    $.get('bug/form.html',function(html){
+                        var index = layer.open({
+                            type: 1
+                            ,title: 'BUG信息'
+                            ,area: ['800px', '530px']
+                            ,shade: 0
+                            ,maxmin: true
+                            ,content: html
+                            ,btn: ['保存', '取消']
+                            ,yes: function(){
+                               var options=$("#userDP option:selected");
+                               var devUserId =  aoptions.val();
+
+
+
+                            }
+                            ,btn2: function(){
+                                var gt_value = document.getElementById('demo').value
+                                alert(gt_value);
+                                layer.close(index);
+                            }
+                        });
+
+                        var layedit = layui.layedit;
+                        var editIndex = layedit.build('demo'); //建立编辑器
+                        layui.form.render('select');
+
+                        layui.form.on('submit(bug-form-submit)', function(data) {
+                            data.field["content"] = layedit.getContent(editIndex);
+                            $.post('user/addOrUpdateUser', data.field, function (data) {
+                                layer.msg('保存成功');
+                                layer.close(index);
+                            }, 'json');
+
+                            return false; //阻止表单跳转。如果需要表单跳转，去掉这段即可。
+                        });
+                    });
+
+                    break;
+                case 'getCheckData':
+                    var data = checkStatus.data;
+                    layer.alert(JSON.stringify(data));
+                    break;
+                case 'getCheckLength':
+                    var data = checkStatus.data;
+                    layer.msg('选中了：'+ data.length + ' 个');
+                    break;
+                case 'isAll':
+                    layer.msg(checkStatus.isAll ? '全选': '未全选');
+                    break;
+            };
+        });
+
+
+        //监听行工具事件
+        table.on('tool(bug)', function(obj){
+            var data = obj.data;
+            //console.log(obj)
+            if(obj.event === 'del') {
+                layer.confirm('真的删除行么', function (index) {
+                    obj.del();
+                    layer.close(index);
+                });
+                // } else if(obj.event === 'edit'){
+                //     layer.prompt({
+                //         formType: 2
+                //         ,value: data.email
+                //     }, function(value, index){
+                //         obj.update({
+                //             email: value
+                //         });
+                //         layer.close(index);
+                //     });
+            } else if(obj.event === 'edit'){
+                var tree;
+                var index = layer.open({
+                    type: 1
+                    ,title: '任务成员'
+                    ,area: ['400px', '300px']
+                    ,shade: 0
+                    ,maxmin: true
+                    ,content: '<ul id="menuTree"></ul>'
+                    ,btn: ['保存', '取消']
+                    ,yes: function(){
+                        var roles = tree.getChecked(false, true);
+                        var roleIdArray = new Array();
+                        for(var i = 0; i< roles.length; i++){
+                            roleIdArray.push(roles[i].id);
+                        }
+                        $.post('role/addMenu',{roleId:data.id,menuIds:roleIdArray},function(){
+                            layer.msg('设置成功');
+                            layer.close(index);
+                        });
+                    }
+                    ,btn2: function(){
+                        layer.close(index);
+                    }
+                });
+
+                layui.extend({
+                    eleTree: 'ele-tree/eleTree'
+                }).use(['eleTree'], function () {
+                    tree = layui.eleTree.render({
+                        elem: '#menuTree',
+                        url: '/user/getUserList',
+                        showCheckbox: true,
+                        request: {
+                            name: "name",
+                            key: "id",
+                            children: "children",
+                            checked: "checked",
+                            disabled: "disabled",
+                            isLeaf: "isLeaf"
+                        },
+                        response: {
+                            statusName: "code",
+                            statusCode: 0,
+                            dataName: "list"
+                        },
+                        done:function(){
+                            tree.expandAll(); // 树有BUG，必须展开才能选中子节点
+                            $.get('role/getMenuByRoleId?roleId=' + data.id,{},function(data){
+                                var idArray = new Array();
+                                for(var i = 0 ; i< data.length;i++){
+                                    idArray.push(data[i].menuId);
+                                }
+
+                                tree.setChecked(idArray,true);
+                            },'json');
+                        }
+                    });
+                });
+            } else if(obj.event === 'showDetail'){
+                layer.prompt({
+                    formType: 2
+                    ,value: data.email
+                }, function(value, index){
+                    obj.update({
+                        email: value
+                    });
+                    layer.close(index);
+                });
+            }
+        });
+    });
+</script>
