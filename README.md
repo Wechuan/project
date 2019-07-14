@@ -1,32 +1,37 @@
-#项目管理开发平台
+# dev-admin
 
-## 项目简介
-项目管理平台研发，项目管理系统是项目的管理者应用专门管理项目的系统软件，在有限的资源约束下，运用系统的观点、方法和理论，对项目涉及的全部工作进行有效地管理。它从项目的投资决策开始到项目结束的全过程进行计划、组织、指挥、协调、控制和评价，以实现项目的目标。
+#### 介绍
+项目开发管理平台
 
-## 技术选型
-
-```
-* 核心框架：Sring boot + Spring Framework + Dubbo
-* 协调服务：Zookeeper
-* 安全框架：Apache Shiro
-* 持久层框架：MyBatis
-* 数据库连接池：Alibaba Druid
-* 缓存框架：Redis
-* 会话管理：Spring-Session
-* 日志管理：SLF4J
-* 前段框架 :Bootstrap+Jquery
-
-```
-
-## 主要功能
-* projectManagement是Java语言的分布式系统架构。使用Spring整合开源框架。
-* 使用Maven对项目进行模块化管理，提高项目的易开发性，拓展性。
-* 系统包括4个子系统：系统管理Service、系统管理Web、业务Service、业务Web。
-* 可以无限的扩张子系统，子系统之间使用Dubbo进行通信。
+#### 软件架构
+软件架构说明
 
 
-### 使用说明
+#### 安装教程
 
-项目依赖Redis、Zookeeper服务。
+1. xxxx
+2. xxxx
+3. xxxx
+
+#### 使用说明
+
+1. xxxx
+2. xxxx
+3. xxxx
+
+#### 参与贡献
+
+1. Fork 本仓库
+2. 新建 Feat_xxx 分支
+3. 提交代码
+4. 新建 Pull Request
 
 
+#### 码云特技
+
+1. 使用 Readme\_XXX.md 来支持不同的语言，例如 Readme\_en.md, Readme\_zh.md
+2. 码云官方博客 [blog.gitee.com](https://blog.gitee.com)
+3. 你可以 [https://gitee.com/explore](https://gitee.com/explore) 这个地址来了解码云上的优秀开源项目
+4. [GVP](https://gitee.com/gvp) 全称是码云最有价值开源项目，是码云综合评定出的优秀开源项目
+5. 码云官方提供的使用手册 [https://gitee.com/help](https://gitee.com/help)
+6. 码云封面人物是一档用来展示码云会员风采的栏目 [https://gitee.com/gitee-stars/](https://gitee.com/gitee-stars/)
